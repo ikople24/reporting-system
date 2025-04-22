@@ -3,6 +3,9 @@ import Logo from "./Logo";
 import Profile from "./Profile";
 
 
+
+
+
 const Navbar = () => {
   return (
     <nav>
@@ -12,7 +15,8 @@ const Navbar = () => {
           <p>Connect</p>
           <p>หน่วยงานที่เลือก</p>
         </div>
-        <Profile />
+        <Profile></Profile>
+        
       </div>
     </nav>
   );
