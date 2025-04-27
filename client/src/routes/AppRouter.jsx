@@ -1,25 +1,21 @@
 import { BrowserRouter, Routes, Route, Outlet } from "react-router";
+import AdminLayout from "../layouts/AdminLayout";
+import UserLayout from "../layouts/UserLayout";
 import PrivateRoute from "../components/PrivateRoute";
 import Forbidden from "../pages/Forbidden";
 import Home from "../pages/Home";
 import Dashbord from "../pages/admin/Dashbord";
-import Navbar from "../components/navbar/Navbar";
+import Profile from "@/components/navbar/Profile";
+
 
 const AppRouter = () => {
   return (
     <BrowserRouter>
       <Routes>
         {/* Public */}
-        <Route
-          element={
-            <>
-              <Navbar />
-              <Outlet />
-            </>
-          }
-        >
+        <Route element={<UserLayout />}>
           <Route path="/" element={<Home />} />
-          <Route path="About" element={<h1>About</h1>} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="map" element={<h1>Map</h1>} />
         </Route>
 
@@ -28,8 +24,7 @@ const AppRouter = () => {
           path="admin"
           element={
             <PrivateRoute allowedRoles={["admin"]}>
-              <Navbar />
-              <Outlet />
+              <AdminLayout/>
             </PrivateRoute>
           }
         >
