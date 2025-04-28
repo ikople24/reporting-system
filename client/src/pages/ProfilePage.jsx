@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { createProfile } from "../api/profile";
 import useAuthToken from "../hooks/useAuthToken";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const ProfilePage = () => {
   const [name, setName] = useState('');
@@ -19,12 +21,12 @@ const ProfilePage = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <input
+      <Input
         value={name}
         onChange={(e) => setName(e.target.value)}
         placeholder="Your Name"
       />
-      <button type="submit">Save Profile</button>
+      <Button  type="submit">Save Profile</Button>
     </form>
   );
 };

@@ -8,7 +8,7 @@ const Home = () => {
   return (
     <section>
       <h1>Home</h1>
-      <div className="grid  sm:grid-cols-2 xs:grid-cols-1 ">
+      <div className="grid  sm:grid-cols-1 xs:grid-cols-2 ">
         <Pm25Dashboard />
         <Pm25DashboardFull/>
       </div>

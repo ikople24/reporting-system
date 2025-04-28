@@ -5,7 +5,8 @@ import PrivateRoute from "../components/PrivateRoute";
 import Forbidden from "../pages/Forbidden";
 import Home from "../pages/Home";
 import Dashbord from "../pages/admin/Dashbord";
-import Profile from "@/components/navbar/Profile";
+import ProfilePage from "@/pages/ProfilePage";
+import Settings from "@/pages/admin/Settings";
 
 
 const AppRouter = () => {
@@ -15,8 +16,8 @@ const AppRouter = () => {
         {/* Public */}
         <Route element={<UserLayout />}>
           <Route path="/" element={<Home />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="map" element={<h1>Map</h1>} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/settings" element={<Settings />} />
         </Route>
 
         {/* Private Admin FIXME: and Layout Gruping  Note หลังPart จะแสดงลูกๆ*/}
