@@ -5,11 +5,12 @@ import UserLayout from "../layouts/UserLayout";
 import PrivateRoute from "../components/PrivateRoute";
 import Forbidden from "../pages/Forbidden";
 import Home from "../pages/Home";
-import Dashbord from "../pages/admin/Dashbord";
+
 import ProfilePage from "@/pages/ProfilePage";
 import Settings from "@/pages/admin/Settings";
 import MigrateListProbs from "@/pages/MigrateListProbs";
-
+import AdminListProbs from "@/pages/admin/AdminListProbs";
+import AdminDashboard from "@/pages/admin/AdminDashbord";
 
 const AppRouter = () => {
   return (
@@ -31,9 +32,10 @@ const AppRouter = () => {
             </PrivateRoute>
           }
         >
-          <Route index element={<Dashbord />} />
+          <Route index element={<AdminDashboard />} />
           <Route path="migrate-listprobs" element={<MigrateListProbs />} />
           <Route path="settings" element={<h1>Settings</h1>} />
+          <Route path="listprobs" element={<AdminListProbs />} />
         </Route>
 
         {/* Notfound */}

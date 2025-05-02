@@ -57,7 +57,7 @@ const MigrateListProbs = () => {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">
-        ย้ายข้อมูลจาก Glide (listprobs)
+        รายการเมนูหลัก Smart-Apps (listprobs)
       </h1>
 
       <div className="overflow-x-auto">
@@ -65,9 +65,9 @@ const MigrateListProbs = () => {
           <thead>
             <tr className="bg-gray-100">
               <th className="p-2 border">เลือก</th>
+              <th className="p-2 border">ไอค่อน</th>
               <th className="p-2 border">ลำดับ</th>
-              <th className="p-2 border">ชื่อเรื่อง</th>
-              <th className="p-2 border">ไอคอน</th>
+              <th className="p-2 border">ชื่อปุ่มกด</th>
               <th className="p-2 border">สถิติการกด</th>
               <th className="p-2 border">Location</th>
             </tr>

@@ -3,15 +3,14 @@ import listProbsModel from "../models/listProbsModel.js"; // MongoDB Schema
 
 const router = express.Router();
 
-// รับข้อมูลที่เลือกมาแล้ว save เข้า MongoDB
-router.post("/migrate", async (req, res) => {
+// ดึงข้อมูลจาก MongoDB
+router.get("/listprobs", async (req, res) => {
   try {
-    const payload = req.body;
-    const result = await listProbsModel.insertMany(payload);
-    res.status(201).json(result);
+    const rows = await listProbsModel.find();
+    res.json(rows);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Migration failed" });
+    res.status(500).json({ error: "Failed to fetch from MongoDB" });
   }
 });
 

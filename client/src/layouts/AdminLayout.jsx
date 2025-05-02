@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { useState } from "react";
-import Sidebar from "../components/Sidebar";
+import Sidebar from "@/components/sidebar/Sidebar";
 import { useAuth } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 import { Home } from "lucide-react"; // ใช้ไอคอน Home

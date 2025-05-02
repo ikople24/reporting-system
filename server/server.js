@@ -2,10 +2,12 @@
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
+import mongoose from "mongoose";
 import { clerkMiddleware } from "@clerk/express";
 import glideRoutes from "./routes/glideRousts.js";
 import migrateRoute from "./routes/migrateRoute.js";
-import mongoose from "mongoose";
+import listProbsRoutes from "./routes/listProbsRoute.js"
+
 
 import dotenv from "dotenv";
 dotenv.config();
@@ -19,6 +21,8 @@ app.use(clerkMiddleware());
 
 app.use("/api", glideRoutes);
 app.use("/api", migrateRoute);
+
+app.use("/api", listProbsRoutes);
 
 // ✅ MongoDB Atlas connect
 mongoose.connect(process.env.DATABASE_URL)
