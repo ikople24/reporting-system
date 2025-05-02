@@ -1,12 +1,14 @@
 import { BrowserRouter, Routes, Route, Outlet } from "react-router";
 import AdminLayout from "../layouts/AdminLayout";
 import UserLayout from "../layouts/UserLayout";
+
 import PrivateRoute from "../components/PrivateRoute";
 import Forbidden from "../pages/Forbidden";
 import Home from "../pages/Home";
 import Dashbord from "../pages/admin/Dashbord";
 import ProfilePage from "@/pages/ProfilePage";
 import Settings from "@/pages/admin/Settings";
+import MigrateListProbs from "@/pages/MigrateListProbs";
 
 
 const AppRouter = () => {
@@ -30,6 +32,7 @@ const AppRouter = () => {
           }
         >
           <Route index element={<Dashbord />} />
+          <Route path="migrate-listprobs" element={<MigrateListProbs />} />
           <Route path="settings" element={<h1>Settings</h1>} />
         </Route>
 
