@@ -24,13 +24,14 @@ const AdminListProbs = () => {
 
   return (
     <div className="flex">
-      
+
       <main className="p-4 flex-1">
         <h1 className="text-2xl font-bold mb-4">จัดการข้อมูล ListProbs</h1>
-        <table className="table-auto w-full border">
+        <table className="table-auto w-full border ">
           <thead>
             <tr className="bg-gray-100">
               <th className="p-2 border">ลำดับ</th>
+              <th className="p-2 border">ไอคอน</th>
               <th className="p-2 border">ชื่อเรื่อง</th>
               <th className="p-2 border">จัดการ</th>
             </tr>
@@ -39,6 +40,17 @@ const AdminListProbs = () => {
             {data.map((item) => (
               <tr key={item._id}>
                 <td className="p-2 border text-center">{item["1ToqF"]}</td>
+                <td className="p-2 border text-center">
+                  {item["Prob_pic"] ? (
+                    <img
+                      src={item["Prob_pic"]}
+                      alt={item["Prob_name"]}
+                      className="w-20 h-20 object-cover rounded"
+                    />
+                  ) : (
+                    <span>-</span>  // fallback ถ้าไม่มีรูป
+                  )}
+                </td>
                 <td className="p-2 border">{item["Prob_name"]}</td>
                 <td className="p-2 border text-center">
                   <button
