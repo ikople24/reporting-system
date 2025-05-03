@@ -22,9 +22,14 @@ const listProbsTable = glide.table({
 });
 
 // route ดึงข้อมูลจาก glide
-router.get("/listprobs", async (req, res) => {
-  const rows = await listProbsTable.get();
-  res.json(rows);
+router.get("/glide-listprobs", async (req, res) => {
+  try {
+    const rows = await listProbsTable.get();
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch data from Glide" });
+  }
 });
 
 export default router; // ✅ ต้องเป็น export default

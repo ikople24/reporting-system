@@ -5,8 +5,13 @@ const router = express.Router();
 
 // GET all
 router.get("/listprobs", async (req, res) => {
-  const data = await listProbsModel.find();
-  res.json(data);
+  try {
+    const data = await listProbsModel.find();
+    res.json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch data from MongoDB" });
+  }
 });
 
 // POST create
@@ -18,8 +23,14 @@ router.post("/listprobs", async (req, res) => {
 
 // PUT update
 router.put("/listprobs/:id", async (req, res) => {
-  const updated = await listProbsModel.findByIdAndUpdate(req.params.id, req.body, { new: true });
-  res.json(updated);
+  try {
+    const { id } = req.params;
+    const updated = await listProbsModel.findByIdAndUpdate(id, req.body, { new: true });
+    res.json(updated);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to update" });
+  }
 });
 
 // DELETE
@@ -27,5 +38,7 @@ router.delete("/listprobs/:id", async (req, res) => {
   await listProbsModel.findByIdAndDelete(req.params.id);
   res.json({ message: "Deleted" });
 });
+
+
 
 export default router;
