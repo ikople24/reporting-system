@@ -8,6 +8,8 @@ import glideRoutes from "./routes/glideRousts.js";
 import migrateRoute from "./routes/migrateRoute.js";
 import listProbsRoutes from "./routes/listProbsRoute.js"
 import uploadRoutes from "./routes/uploadRoutes.js";
+import listUseProbRoutes from './routes/listUseProbRoutes.js';
+
 
 import dotenv from "dotenv";
 dotenv.config();
@@ -22,9 +24,11 @@ app.use(clerkMiddleware());
 app.use("/api", glideRoutes);
 app.use("/api", migrateRoute);
 
-app.use("/api", listProbsRoutes);
 app.use("/api", uploadRoutes);
 
+app.use("/api", listProbsRoutes);
+
+app.use('/api/listuseprobs', listUseProbRoutes);
 
 
 // ✅ MongoDB Atlas connect

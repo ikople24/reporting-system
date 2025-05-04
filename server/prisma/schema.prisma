@@ -14,12 +14,36 @@ generator client {
 }
 
 model User {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  clerkId  String @unique
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  clerkId   String   @unique
   firstname String
   lastname  String
   email     String
-  UpdateAt  DateTime   @updatedAt
+  UpdateAt  DateTime @updatedAt
   createdAt DateTime @default(now())
 }
 
+model ListProb {
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  Prob_name   String
+  DP_Order    Int
+  Prob_pic    String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  ListUseProb ListUseProb[]
+
+  @@map("listprobs") // 👈 mapping ให้ collection ใช้ชื่อเดียวกับ Mongoose
+}
+
+model ListUseProb {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  Prob_menu   String
+  Prob_pickup String
+  pick_icon   String
+  listProbId  String   @db.ObjectId
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  ListProb    ListProb @relation(fields: [listProbId], references: [id])
+  
+  @@map("listuseprobs")
+}
