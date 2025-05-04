@@ -1,16 +1,35 @@
 import { useEffect, useState } from "react";
 import { fetchListProbs, deleteListProb } from "@/api/listprobs";
+import { fetchListUseProbs } from "@/api/listuseprobs";
 import ImageUploader from "@/components/ImageUploader";
-import axios from "axios";
+import AdminTable from "@/components/admin/AdminTable";
 
+import axios from "axios";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 
 const AdminListProbs = () => {
   const [data, setData] = useState([]);
   const [editingItem, setEditingItem] = useState(null);
+  const [activeTab, setActiveTab] = useState("listprobs");
   const [newName, setNewName] = useState(""); // ชื่อใหม่
   const [newFile, setNewFile] = useState(null); // ไฟล์ใหม่
   const [uploadedUrl, setUploadedUrl] = useState(null);
   const [newOrder, setNewOrder] = useState(""); // เพิ่ม state สำหรับ DP_Order
+  const [listProbsData, setListProbsData] = useState([]);
+  const [listUseProbsData, setListUseProbsData] = useState([]);
+
+  const columns = [
+    { label: "ลำดับ", className: "w-24 text-center" },
+    { label: "ไอคอน", className: "w-32 text-center" },
+    { label: "ชื่อเรื่อง" },
+    { label: "จัดการ", className: "text-center" },
+  ];
+
+  const imageKey = activeTab === "listprobs" ? "Prob_pic" : "pick_icon";
+  const nameKey = activeTab === "listprobs" ? "Prob_name" : "Prob_menu";
+  const orderKey = activeTab === "listprobs" ? "DP_Order" : undefined; // index +1 ถ้าไม่มี
 
   // ✅ โหลดข้อมูล
   const loadData = async () => {
@@ -32,34 +51,43 @@ const AdminListProbs = () => {
   // ✅ บันทึกข้อมูลแก้ไข
   const handleUpdate = async () => {
     try {
-      console.log("👉 newOrder = ", newOrder); // ✅ เช็ค newOrder ตอนพิมพ์
+      if (activeTab === "listprobs") {
+        let payload = {
+          Prob_name: newName,
+          DP_Order: parseInt(newOrder, 10) || 0,
+        };
+        if (uploadedUrl) payload.Prob_pic = uploadedUrl;
 
-      let payload = {
-        Prob_name: newName,
-        DP_Order: parseInt(newOrder, 10) || 0, // ✅ เพิ่มตรงนี้
-      };
-
-      if (uploadedUrl) {
-        payload.Prob_pic = uploadedUrl;
-      }
-
-      if (editingItem._id) {
-        // ✅ กรณีแก้ไข
-        await axios.put(`/api/listprobs/${editingItem._id}`, payload);
-        alert("อัพเดตข้อมูลเรียบร้อย");
-      } else {
-        // ✅ กรณีเพิ่มใหม่
-        // 👉🏻 หา max DP_Order + 1
-        const maxOrder =
-          data.length > 0 ? Math.max(...data.map((d) => d.DP_Order || 0)) : 0;
-        payload.DP_Order = maxOrder + 1;
-
-        await axios.post(`/api/listprobs`, payload);
-        alert("เพิ่มข้อมูลเรียบร้อย");
+        if (editingItem._id) {
+          await axios.put(`/api/listprobs/${editingItem._id}`, payload);
+          alert("อัพเดต ListProbs เรียบร้อย");
+        } else {
+          const maxOrder =
+            listProbsData.length > 0
+              ? Math.max(...listProbsData.map((d) => d.DP_Order || 0))
+              : 0;
+          payload.DP_Order = maxOrder + 1;
+          await axios.post(`/api/listprobs`, payload);
+          alert("เพิ่ม ListProbs เรียบร้อย");
+        }
+        loadData(); // โหลดใหม่
+      } else if (activeTab === "listuseprobs") {
+        let payload = {
+          Prob_menu: newName,
+          Prob_pickup: "-",
+          pick_icon: uploadedUrl || "-", // ถ้าไม่เลือกภาพให้ default
+        };
+        if (editingItem._id) {
+          await axios.put(`/api/listuseprobs/${editingItem._id}`, payload);
+          alert("อัพเดต ListUseProbs เรียบร้อย");
+        } else {
+          await axios.post(`/api/listuseprobs`, payload);
+          alert("เพิ่ม ListUseProbs เรียบร้อย");
+        }
+        loadData(); // โหลดใหม่
       }
 
       setEditingItem(null);
-      loadData();
       setUploadedUrl(null);
     } catch (err) {
       console.error("Error saving", err);
@@ -76,124 +104,120 @@ const AdminListProbs = () => {
   };
 
   useEffect(() => {
-    loadData();
-  }, []);
+    if (activeTab === "listprobs") {
+      fetchListProbs().then((res) => {
+        const sorted = res.data.sort((a, b) => a.DP_Order - b.DP_Order);
+        setListProbsData(sorted);
+      });
+    } else if (activeTab === "listuseprobs") {
+      fetchListUseProbs().then((res) => {
+        setListUseProbsData(res.data);
+      });
+    }
+  }, [activeTab]);
 
-  return (
-    <div className="flex">
-      <main className="p-4 flex-1">
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-bold mb-4">จัดการข้อมูล ListProbs</h1>
+  return (<div className="flex ">
+    <main className="p-4 flex-1">
+      <div className="flex items-start justify-between mb-4">
+        <h1 className="text-2xl font-bold mb-4">จัดการข้อมูล</h1>
+        <div className="flex gap-2 mb-4">
           <button
-            onClick={() => {
-              setEditingItem({});
-              setNewName("");
-              setNewOrder(""); // ✅ เพิ่มตรงนี้
-              setUploadedUrl(null);
-            }}
-            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+            onClick={() => setActiveTab("listprobs")}
+            className={`px-4 py-2 rounded ${
+              activeTab === "listprobs" ? "bg-blue-500 text-white" : "bg-gray-200 text-black"
+            }`}
           >
-            เพิ่มข้อมูล
+            ListProbs
+          </button>
+          <button
+            onClick={() => setActiveTab("listuseprobs")}
+            className={`px-4 py-2 rounded ${
+              activeTab === "listuseprobs" ? "bg-blue-500 text-white" : "bg-gray-200 text-black"
+            }`}
+          >
+            ListUseProbs
           </button>
         </div>
 
-        <table className="table-auto w-full border ">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="p-2 border">ลำดับ</th>
-              <th className="p-2 border">ไอคอน</th>
-              <th className="p-2 border">ชื่อเรื่อง</th>
-              <th className="p-2 border">จัดการ</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((item, idx) => (
-              <tr key={item._id || idx}>
-                <td className="p-2 border text-center">{item["DP_Order"]}</td>
-                <td className="p-2 border text-center">
-                  {item["Prob_pic"] ? (
-                    <img
-                      src={item["Prob_pic"]}
-                      alt={item["Prob_name"]}
-                      className="w-20 h-20 object-cover rounded"
-                    />
-                  ) : (
-                    <span>-</span>
-                  )}
-                </td>
-                <td className="p-2 border">{item["Prob_name"]}</td>
-                <td className="p-2 border text-center space-x-2">
-                  <button
-                    onClick={() => handleEdit(item)}
-                    className="bg-yellow-400 text-gray-600 px-2 py-1 rounded hover:bg-yellow-500"
-                  >
-                    แก้ไข
-                  </button>
-                  <button
-                    onClick={() => handleDelete(item._id)}
-                    className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
-                  >
-                    ลบ
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </main>
-   
+        <button
+          onClick={() => {
+            setEditingItem({});
+            setNewName("");
+            setNewOrder("");
+            setUploadedUrl(null);
+          }}
+          className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+        >
+          เพิ่มข้อมูล
+        </button>
+      </div>
 
-      {/* Modal Edit */}
+      {/* ✅ ใช้ AdminTable */}
+      <AdminTable
+        data={activeTab === "listprobs" ? listProbsData : listUseProbsData}
+        columns={columns}
+        imageKey={imageKey}
+        nameKey={nameKey}
+        orderKey={orderKey}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
+
+      {/* modal เดิมเหมือนเดิม */}
       {editingItem && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded shadow-md w-96">
-            <h2 className="text-xl font-bold mb-4">
+          <div className="bg-white dark:bg-gray-900 text-black dark:text-white p-6 rounded shadow-md w-96">
+            <Label className="text-xl font-bold mb-4">
               {editingItem._id ? "แก้ไขข้อมูล" : "เพิ่มข้อมูลใหม่"}
-            </h2>
-            <label className="block mb-2">ชื่อเรื่อง</label>
-            <input
+            </Label>
+            <label className="block mb-2">
+              {activeTab === "listprobs" ? "ชื่อเรื่องปัญหา" : "ชื่อเรื่องการเลือกปัญหา"}
+            </label>
+            <Input
               type="text"
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
               className="w-full border rounded p-2 mb-4"
             />
-            <label className="block mb-2">ลำดับ DP_Order</label>
-            <input
-              type="number"
-              value={newOrder}
-              onChange={(e) => setNewOrder(Number(e.target.value))}
-              className="w-full border rounded p-2 mb-4"
-            />
+
+            {activeTab === "listprobs" && (
+              <>
+                <label className="block mb-2">ลำดับ DP_Order</label>
+                <Input
+                  type="number"
+                  value={newOrder}
+                  onChange={(e) => setNewOrder(Number(e.target.value))}
+                  className="w-full border rounded p-2 mb-4"
+                />
+              </>
+            )}
+
             <label className="block mb-2">
               {editingItem._id ? "เปลี่ยนรูปภาพ" : "อัพโหลดภาพ"}
             </label>
             {uploadedUrl && (
-              <img
-                src={uploadedUrl}
-                alt="uploaded"
-                className="w-40 h-40 rounded mt-2"
-              />
+              <img src={uploadedUrl} alt="uploaded" className="w-40 h-40 rounded mt-2" />
             )}
             <ImageUploader onUploadComplete={setUploadedUrl} />
+
             <div className="flex justify-end gap-2">
-              <button
-                onClick={() => setEditingItem(null)}
-                className="bg-gray-300 px-4 py-2 rounded"
-              >
+              <Button onClick={() => setEditingItem(null)} className="hover:bg-orange-400 px-4 py-2 rounded">
                 ยกเลิก
-              </button>
-              <button
-                onClick={() => handleUpdate()}
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              </Button>
+              <Button
+                onClick={handleUpdate}
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-green-400 hover:text-gray-800"
               >
                 บันทึก
-              </button>
+              </Button>
             </div>
           </div>
         </div>
       )}
-    </div>
-  );
+    </main>
+  </div>
+);
+    
 };
 
 export default AdminListProbs;

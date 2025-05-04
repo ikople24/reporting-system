@@ -1,6 +1,8 @@
 const AdminDashbord = () => {
   return (
-    <div>AdminDashbord</div>
-  )
-}
-export default AdminDashbord
+    <span className="text-[color:var(--color-text)] hover:text-[color:var(--color-text-hover)]">
+      Dashboard
+    </span>
+  );
+};
+export default AdminDashbord;
